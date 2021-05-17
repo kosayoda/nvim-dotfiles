@@ -27,15 +27,13 @@ Plug 'christoomey/vim-tmux-navigator'
 " Horizontal movement highlighting
 Plug 'unblevable/quick-scope'
 " Smooth scrolling
-Plug 'psliwka/vim-smoothie'
+Plug 'karb94/neoscroll.nvim'
 " Edit surroundings of text objects
 Plug 'machakann/vim-sandwich'
-" View register contents
-Plug 'junegunn/vim-peekaboo'
-" Align text
-Plug 'junegunn/vim-easy-align'
 " Automatically change directory to project root
 Plug 'airblade/vim-rooter'
+" Indentation guides
+Plug 'lukas-reineke/indent-blankline.nvim', { 'branch': 'lua' }
 " vim-repeat
 Plug 'tpope/vim-repeat'
 
@@ -47,8 +45,6 @@ Plug 'neovim/nvim-lspconfig'
 Plug 'hrsh7th/nvim-compe'
 " LSP status
 Plug 'nvim-lua/lsp-status.nvim'
-" LSP extensions (inlay hints mainly)
-Plug 'nvim-lua/lsp_extensions.nvim'
 " Treesitter
 Plug 'nvim-treesitter/nvim-treesitter', { 'do': ':TSUpdate' }
 
@@ -57,7 +53,8 @@ Plug 'nvim-treesitter/nvim-treesitter', { 'do': ':TSUpdate' }
 Plug 'rhysd/committia.vim'
 " Git messenger
 Plug 'rhysd/git-messenger.vim'
-Plug 'rhysd/conflict-marker.vim'
+" Git signs
+Plug 'lewis6991/gitsigns.nvim'
 
 " - Language-specific -
 " LaTeX
@@ -65,8 +62,6 @@ Plug 'lervag/vimtex'
 Plug 'KeitaNakamura/tex-conceal.vim', {'for': 'tex'}
 " Python
 Plug 'Vimjas/vim-python-pep8-indent', {'for': 'python'}
-" Svelte
-Plug 'leafOfTree/vim-svelte-plugin'
 " Markdown
 Plug 'iamcco/markdown-preview.nvim', {'do': 'cd app & yarn install'}
 

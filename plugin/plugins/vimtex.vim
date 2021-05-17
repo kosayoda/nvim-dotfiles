@@ -13,14 +13,12 @@ let g:tex_conceal = 'abdgm'
 let g:tex_superscripts = "[0-9a-zA-W.,:;+-<>/()=]"
 let g:tex_subscripts = "[0-9aehijklmnoprstuvx,+-/().]"
 
-let g:vimtex_compiler_latexmk = {
-    \ 'options' : [
-    \   '-pdf',
-    \   '-pdflatex="xelatex --shell-escape %O %S"',
-    \   '-verbose',
-    \   '-file-line-error',
-    \   '-synctex=1',
-    \   '-interaction=nonstopmode',
-    \ ],
-    \}
-let g:vimtex_compiler_latexmk_engines = { '_': '-xelatex' }
+" let g:vimtex_compiler_latexmk = {
+"     \ 'options' : [
+"     \   '-verbose',
+"     \   '-file-line-error',
+"     \   '-synctex=1',
+"     \   '-interaction=nonstopmode',
+"     \ ],
+"     \}
+" let g:vimtex_compiler_latexmk_engines = { '_': '-pdf -pdflatex="xelatex --shell-escape %O %S"' }

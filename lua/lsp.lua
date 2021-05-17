@@ -8,22 +8,18 @@ lsp_status.register_progress()
 -- nvim-lightbulb
 vim.fn.sign_define("LightBulbSign", { text = "󱉵", texthl = "LspDiagnosticsSignWarning" })
 vim.cmd (
-    [[ autocmd CursorHold * lua require("nvim-lightbulb").update_lightbulb { sign_priority = 5 } ]]
+    [[ autocmd CursorHold,CursorHoldI * lua LightBulbFunc() ]]
 )
-
--- nvim-compe
-require("compe").setup({
-    enabled = true;
-    source = {
-        path = true;
-        buffer = true;
-        vsnip = true;
-        nvim_lsp = true;
+LightBulbFunc = function()
+    require("nvim-lightbulb").update_lightbulb {
+        sign = { enabled = true },
+        -- virtual_text = { enabled = false, text = "󱉵 ", column = -1, text_pos = "overlay"},
+        -- float = { enabled = false, text = "󱉵 "},
     }
-})
+end
 
 -- nvim-telescope
-local format_telescope = function(picker)
+local telescope = function(picker)
     return string.format("<cmd> lua require('telescope.builtin').%s()<CR>", picker)
 end
 
@@ -31,21 +27,21 @@ end
 local on_attach = function(_)
     local filetype = vim.api.nvim_buf_get_option(0, 'filetype')
     local mapper = function(mode, key, result)
-        vim.fn.nvim_buf_set_keymap(0, mode, key, result, {noremap=true, silent=true})
+        vim.api.nvim_buf_set_keymap(0, mode, key, result, {noremap=true, silent=true})
     end
 
     -- Information and search
     mapper('n', 'K',         '<cmd>lua vim.lsp.buf.hover()<CR>')
-    mapper('n', 'gd',        '<cmd>lua vim.lsp.buf.definition()<CR>')
-    mapper('n', 'gD',        '<cmd>lua vim.lsp.buf.declaration()<CR>')
-    mapper('n', 'gi',        '<cmd>lua vim.lsp.buf.implementation()<CR>')
-    mapper('n', 'gr',        format_telescope('lsp_references'))
-    mapper('n', 'gt',        '<cmd>lua vim.lsp.buf.type_definition()<CR>')
-    mapper('n', 'gw',        format_telescope('lsp_document_symbols'))
-    mapper('n', 'gW',        format_telescope('lsp_workspace_symbols'))
+    mapper('n', 'gd',        '<cmd>lua vim.lsp.buf.declaration()<CR>')
+    mapper('n', 'gD',        '<cmd>lua vim.lsp.buf.definition()<CR>')
+    mapper('n', 'gr',        telescope('lsp_references'))
+    mapper('n', 'gw',        telescope('lsp_document_symbols'))
+    -- mapper('n', 'gi',        '<cmd>lua vim.lsp.buf.implementation()<CR>')
+    -- mapper('n', 'gt',        '<cmd>lua vim.lsp.buf.type_definition()<CR>')
+    -- mapper('n', 'gW',        telescope('lsp_workspace_symbols'))
 
     -- Actions
-    mapper('n', 'ga',        format_telescope('lsp_code_actions'))
+    mapper('n', 'ga',        telescope('lsp_code_actions'))
     mapper('n', 'gf',        '<cmd>lua vim.lsp.buf.formatting()<CR>')
     mapper('n', 'gR',        '<cmd>lua vim.lsp.buf.rename()<CR>')
 
@@ -55,14 +51,7 @@ local on_attach = function(_)
     mapper('n', '[d',            '<cmd>lua vim.lsp.diagnostic.goto_prev()<CR>')
 
     -- Rust specific stuff
-    if filetype == 'rustlalalala' then
-        -- Inlay hints
-        vim.cmd(
-            [[autocmd BufEnter,BufWritePost <buffer> :lua require('lsp_extensions.inlay_hints').request { ]]
-            .. [[aligned = true, prefix = " » ", enabled = {"TypeHint", "ChainingHint", "ParameterHint"}]]
-            .. [[} ]]
-        )
-
+    if filetype == 'rust' then
         -- Auto format files
         vim.cmd [[autocmd BufWritePre <buffer> :lua vim.lsp.buf.formatting_sync()]]
     end
@@ -79,8 +68,11 @@ nvim_lsp.rust_analyzer.setup{
         ['rust-analyzer'] = {
             cargo = { allFeatures = true, autoReload = true },
             checkOnSave = {
-                enable=true, command = "clippy",
+                enable = true, command = "clippy",
             },
+            hoverActions = {
+                linksInHover = false
+            }
         }
     }
 }
@@ -90,6 +82,19 @@ nvim_lsp.texlab.setup{on_attach = on_attach, capabilities = lsp_cap}
 
 nvim_lsp.sumneko_lua.setup{
     cmd = {"lua-language-server"},
+    settings = {
+        Lua = {
+            diagnostics = { globals = {"vim"} },
+            workspace = {
+                -- Make the server aware of Neovim runtime files
+                library = {
+                    [vim.fn.expand('$VIMRUNTIME/lua')] = true,
+                    [vim.fn.expand('$VIMRUNTIME/lua/vim/lsp')] = true,
+                }
+            },
+            telemetry = { enable = false },
+        }
+    },
     on_attach = on_attach, capabilities = lsp_cap
 }
 
@@ -98,90 +103,45 @@ nvim_lsp.pyright.setup{
     on_attach = on_attach, capabilities = lsp_cap,
 }
 
-nvim_lsp.svelte.setup{on_attach = on_attach, capabilities = lsp_cap}
-nvim_lsp.diagnosticls.setup{
+nvim_lsp.tsserver.setup{
     on_attach = on_attach, capabilities = lsp_cap,
-    filetypes = { "python", "sh", "bash", "tex" },
-    init_options = {
-        filetypes = {
-            python = "flake8", sh = "shellcheck", bash = "shellcheck",
-            tex = "textidote"
-        },
-        linters = {
-            flake8 = {
-                command = "flake8",
-                debounce = 100,
-                args = { "--format=%(row)d,%(col)d,%(code).1s,%(code)s: %(text)s", "-" },
-                offsetLine =  0,
-                offsetColumn = 0,
-                sourceName = "flake8",
-                formatLines = 1,
-                formatPattern = {
-                    "(\\d+),(\\d+),([A-Z]),(.*)(\\r|\\n)*$",
-                    {
-                        line = 1,
-                        column =  2,
-                        security = 3,
-                        message = 4
-                    }
-                },
-                securities = {
-                    W = "warning",
-                    E = "error",
-                    F = "error",
-                    C = "error",
-                    N = "error"
-                }
-            },
-            shellcheck = {
-                command = "shellcheck",
-                debounce = 100,
-                args = { "--format", "json", "-" },
-                sourceName = "shellcheck",
-                parseJson = {
-                    line = "line",
-                    column = "column",
-                    endLine = "endLine",
-                    endColumn = "endColumn",
-                    message = "${message} [${code}]",
-                    security = "level"
-                },
-                securities = {
-                    error = "error",
-                    warning = "warning",
-                    info = "info",
-                    style = "hint"
-                }
-            },
-            textidote = {
-                command = "textidote",
-                debounce = 500,
-                args = {"--type", "tex", "--check", "en", "--output", "singleline", "--no-color"},
-                offsetLine = 0,
-                offsetColumn = 0,
-                sourceName = "textidote",
-                formatLines = 1,
-                formatPattern = {
-                    "\\(L(\\d+)C(\\d+)-L(\\d+)C(\\d+)\\):(.+)\".+\"$",
-                    {
-                      line = 1,
-                      column = 2,
-                      endLine = 3,
-                      endColumn = 4,
-                      message = 5
-                    }
-                },
-            }
+}
+
+nvim_lsp.svelte.setup{on_attach = on_attach, capabilities = lsp_cap}
+
+local efm = {
+    flake8 = {
+        lintCommand = "flake8 --stdin-display-name ${INPUT} -",
+        lintIgnoreExitCode = true,
+        lintStdin = true,
+        lintFormats = { "%f:%l:%c: %m" },
+        rootMarkers = { "setup.cfg", "tox.ini", ".flake8" },
+    },
+    shellcheck = {
+        lintCommand = "shellcheck -f gcc -x",
+        lintStdin = true,
+        lintFormats = "%f:%l:%c: %t%*[^:]: %m [SC%n]",
+    }
+}
+nvim_lsp.efm.setup {
+    settings = {
+        lintDebounce = 1000000000,
+        languages = {
+            python = { efm.flake8 },
+            sh = { efm.shellcheck },
         }
     }
 }
 
 -- Treesitter
 require('nvim-treesitter.configs').setup {
-  ensure_installed = {"c", "python", "rust"},
-  highlight = {
-    enable = true
+  ensure_installed = {
+      "c", "lua", "python", "rust",
+      "html", "css", "javascript", "typescript", "svelte",
+      "bash", "toml", "rst", "json", "latex",
   },
+  highlight = { enable = true },
+  -- indent = { enable = true }
 }
 
 -- Diagnostics

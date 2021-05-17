@@ -27,7 +27,7 @@ augroup END
 set visualbell
 
 " Whitespace characters
-set listchars=tab:├─,space:·
+set listchars=tab:├─,space:·,eol:>
 
 " Sane splits
 set splitright
@@ -93,7 +93,7 @@ set noshowmode
 set dictionary+=/usr/share/dict/words
 
 " Set completeopt to have a better completion experience
-set completeopt=menuone,noinsert,noselect
+set completeopt=menu,menuone,noselect
 
 " Avoid showing extra message when using completion
 set shortmess+=c
@@ -122,4 +122,5 @@ let g:python_host_prog = '/home/kosa/Documents/code/python/.pyenv/versions/neovi
 let g:python3_host_prog = '/home/kosa/Documents/code/python/.pyenv/versions/neovim3/bin/python'
 
 " Lua
+lua require('init')
 lua require('lsp')
