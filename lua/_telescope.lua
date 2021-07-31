@@ -23,15 +23,15 @@ local common_opts = {
     results_title = false,
     preview_title = false,
 
-    prompt_position = "top",
     prompt_prefix = " 󰍉  ",
     selection_caret = "󰅂 ",
 
     sorting_strategy = "ascending",
-    width = 0.8,
     layout_strategy = "vertical",
     layout_config = {
         preview_height = 0.5,
+        width = 0.8,
+        prompt_position = "top",
     }
 }
 

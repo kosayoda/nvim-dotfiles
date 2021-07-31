@@ -27,15 +27,19 @@ Plug 'christoomey/vim-tmux-navigator'
 " Horizontal movement highlighting
 Plug 'unblevable/quick-scope'
 " Smooth scrolling
-Plug 'karb94/neoscroll.nvim'
+Plug 'psliwka/vim-smoothie'
 " Edit surroundings of text objects
 Plug 'machakann/vim-sandwich'
 " Automatically change directory to project root
 Plug 'airblade/vim-rooter'
 " Indentation guides
-Plug 'lukas-reineke/indent-blankline.nvim', { 'branch': 'lua' }
+Plug 'lukas-reineke/indent-blankline.nvim'
 " vim-repeat
 Plug 'tpope/vim-repeat'
+" Auto-complete brackets
+Plug 'windwp/nvim-autopairs'
+" Number preview
+Plug 'nacro90/numb.nvim'
 
 " -- Coding and language specific --
 " - LSP -
@@ -43,10 +47,16 @@ Plug 'tpope/vim-repeat'
 Plug 'neovim/nvim-lspconfig'
 " LSP completion
 Plug 'hrsh7th/nvim-compe'
+" Snippets
+Plug 'hrsh7th/vim-vsnip'
 " LSP status
 Plug 'nvim-lua/lsp-status.nvim'
 " Treesitter
 Plug 'nvim-treesitter/nvim-treesitter', { 'do': ':TSUpdate' }
+" Function Context using treesitter
+" Plug 'romgrk/nvim-treesitter-context'
+" " Signature help
+" Plug 'ray-x/lsp_signature.nvim'
 
 " - Git -
 " Commit messages
@@ -61,8 +71,10 @@ Plug 'lewis6991/gitsigns.nvim'
 Plug 'lervag/vimtex'
 Plug 'KeitaNakamura/tex-conceal.vim', {'for': 'tex'}
 " Python
-Plug 'Vimjas/vim-python-pep8-indent', {'for': 'python'}
+" Plug 'Vimjas/vim-python-pep8-indent', {'for': 'python'}
 " Markdown
 Plug 'iamcco/markdown-preview.nvim', {'do': 'cd app & yarn install'}
+" Elixir
+Plug 'elixir-editors/vim-elixir'
 
 call plug#end()

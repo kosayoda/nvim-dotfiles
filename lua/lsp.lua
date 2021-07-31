@@ -7,14 +7,15 @@ lsp_status.register_progress()
 
 -- nvim-lightbulb
 vim.fn.sign_define("LightBulbSign", { text = "󱉵", texthl = "LspDiagnosticsSignWarning" })
+
 vim.cmd (
     [[ autocmd CursorHold,CursorHoldI * lua LightBulbFunc() ]]
 )
 LightBulbFunc = function()
     require("nvim-lightbulb").update_lightbulb {
         sign = { enabled = true },
-        -- virtual_text = { enabled = false, text = "󱉵 ", column = -1, text_pos = "overlay"},
-        -- float = { enabled = false, text = "󱉵 "},
+        -- status_text = { enabled = true, text="HIHIHI", text_unavailable="hoho" }, virtual_text = { enabled = false, text = "󱉵 ", column = -1, text_pos = "overlay"},
+        float = { enabled = true, text = "󱉵 "},
     }
 end
 
@@ -58,7 +59,7 @@ local on_attach = function(_)
 end
 
 -- Set up LSP capabilities (This line doesn't do anything atm)
-local lsp_cap = vim.tbl_extend('keep', lsp_cap or {}, lsp_status.capabilities)
+local lsp_cap = {} -- vim.tbl_extend('keep', lsp_cap or {}, lsp_status.capabilities)
 
 -- Setup LSP servers
 nvim_lsp.rust_analyzer.setup{
@@ -109,6 +110,17 @@ nvim_lsp.tsserver.setup{
 
 nvim_lsp.svelte.setup{on_attach = on_attach, capabilities = lsp_cap}
 
+nvim_lsp.elixirls.setup{
+    cmd = {"elixir-ls"},
+    settings = {
+        elixirLS = {
+            dialyzerEnabled = false,
+            fetchDeps = false
+        }
+    },
+    on_attach = on_attach, capabilities = lsp_cap,
+}
+
 local efm = {
     flake8 = {
         lintCommand = "flake8 --stdin-display-name ${INPUT} -",
@@ -136,7 +148,7 @@ nvim_lsp.efm.setup {
 -- Treesitter
 require('nvim-treesitter.configs').setup {
   ensure_installed = {
-      "c", "lua", "python", "rust",
+      "c", "lua", "python", "elixir", "rust",
       "html", "css", "javascript", "typescript", "svelte",
       "bash", "toml", "rst", "json", "latex",
   },
@@ -145,7 +157,7 @@ require('nvim-treesitter.configs').setup {
 }
 
 -- Diagnostics
-vim.fn.sign_define("LspDiagnosticsSignError", { text = "", numhl = "LspDiagnosticsSignError" })
+vim.fn.sign_define("LspDiagnosticsSignError", { text = "E", numhl = "LspDiagnosticsSignError" })
 vim.fn.sign_define("LspDiagnosticsSignWarning", { text = "", numhl = "LspDiagnosticsSignWarning" })
 vim.fn.sign_define(
     "LspDiagnosticsSignInformation", { text = "", numhl = "LspDiagnosticsSignInformation" }
